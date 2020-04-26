@@ -1,0 +1,6 @@
+<?
+return array(
+        'MyEntety' => [
+                'myMethod',
+            ],
+    );
