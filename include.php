@@ -125,24 +125,24 @@ if (APPLICATION_ENV != 'production'
     
     Bitrix\Main\Loader::registerAutoLoadClasses('x.api',  array(
             // абстрация
-            '\X\Abstraction\App'                        => 'classes/abstraction/app.php',
-            '\X\Abstraction\Singleton'                  => 'classes/abstraction/singleton.php',
-            '\X\Abstraction\HLBModel'                   => 'classes/abstraction/hlbmodel.php',
-            '\X\Abstraction\IBModel'                    => 'classes/abstraction/ibmodel.php',
-            '\X\Abstraction\EntityTable'                => 'classes/abstraction/entitytable.php',
-            '\X\Abstraction\Users'                      => 'classes/abstraction/users.php',
-            '\X\Abstraction\UsersModel'                 => 'classes/abstraction/usersmodel.php',
-            '\X\Abstraction\CurrentUser'                => 'classes/abstraction/currentuser.php',
+            '\X\Abstraction\App'                        => 'lib/abstraction/app.php',
+            '\X\Abstraction\Singleton'                  => 'lib/abstraction/singleton.php',
+            '\X\Abstraction\HLBModel'                   => 'lib/abstraction/hlbmodel.php',
+            '\X\Abstraction\IBModel'                    => 'lib/abstraction/ibmodel.php',
+            '\X\Abstraction\EntityTable'                => 'lib/abstraction/entitytable.php',
+            '\X\Abstraction\Users'                      => 'lib/abstraction/users.php',
+            '\X\Abstraction\UsersModel'                 => 'lib/abstraction/usersmodel.php',
+            '\X\Abstraction\CurrentUser'                => 'lib/abstraction/currentuser.php',
             
             // продтомодель
-            '\X\Abstraction\Protomodel\Filestorage'     => 'classes/abstraction/protomodel/filestorage.php',
-            '\X\Abstraction\Protomodel\Stringstorage'   => 'classes/abstraction/protomodel/stringstorage.php',
+            '\X\Abstraction\Protomodel\Filestorage'     => 'lib/abstraction/protomodel/filestorage.php',
+            '\X\Abstraction\Protomodel\Stringstorage'   => 'lib/abstraction/protomodel/stringstorage.php',
             
             // хелперы
-            '\X\Helpers\Debug'                          => 'classes/general/helpers/debug.php',
-            '\X\Helpers\HLReference'                    => 'classes/general/helpers/hlreference.php',
-            '\X\Helpers\Html'                           => 'classes/general/helpers/html.php',
-            '\X\Helpers\Log'                            => 'classes/general/helpers/log.php',
+            '\X\Helpers\Debug'                          => 'lib/helpers/debug.php',
+            '\X\Helpers\HLReference'                    => 'lib/helpers/hlreference.php',
+            '\X\Helpers\Html'                           => 'lib/helpers/html.php',
+            '\X\Helpers\Log'                            => 'lib/helpers/log.php',
         ));
     
     $arAutoload = [];
