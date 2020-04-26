@@ -143,6 +143,9 @@ if (APPLICATION_ENV != 'production'
             '\X\Helpers\HLReference'                    => 'lib/helpers/hlreference.php',
             '\X\Helpers\Html'                           => 'lib/helpers/html.php',
             '\X\Helpers\Log'                            => 'lib/helpers/log.php',
+            
+            //
+            '\X\Result'                                 => 'lib/result.php',
         ));
     
     $arAutoload = [];
