@@ -57,27 +57,46 @@ namespace X\Abstraction {
         {
             $entity = static::getEntity();
             $tableName = $entity->getDBTableName();
-
+            
+            \X\Helpers\Log::add('===> Update table '.$tableName, 'update_tables', 'x');
+            
             $connection = \Bitrix\Main\Application::getInstance()->getConnection();
             if ($connection->isTableExists($tableName)) {
-
+                
+                \X\Helpers\Log::add('Table '.$tableName.' is exists', 'update_tables', 'x');
+                
                 try {
+                    // пробуем пересоздать таблицу с сохранением данных
                     
                     $tmp_tableName = 'x_tmptable_'.$tableName;
                     
                     $r = $connection->query('RENAME TABLE '.$tableName.' TO '.$tmp_tableName);
+                    \X\Helpers\Log::add('Table '.$tableName.' rename to '.$tmp_tableName, 'update_tables', 'x');
+                    
                     $r = $entity->createDbTable();
+                    \X\Helpers\Log::add('New table created', 'update_tables', 'x');
                     
-                    $r = $fields = implode(', ',array_keys($connection->getTableFields($tmp_tableName)));
+                    $fields = '`'.implode('`, `',array_keys($connection->getTableFields($tmp_tableName))).'`';
+                    \X\Helpers\Log::add('Fields for insert: '.$fields, 'update_tables', 'x');
                     
-                    $r = $connection->query('INSERT INTO '.$tableName.' ('.$fields.') SELECT '.$fields.' FROM '.$tmp_tableName.';');
+                    $sql = 'INSERT INTO '.$tableName.' ('.$fields.') SELECT '.$fields.' FROM '.$tmp_tableName.';';
+                    \X\Helpers\Log::add('Query: '.$sql, 'update_tables', 'x');
+                    
+                    $r = $connection->query($sql);
+                    \X\Helpers\Log::add('Data inserted', 'update_tables', 'x');
+                    
                     $r = $connection->query('DROP TABLE '.$tmp_tableName);
+                    \X\Helpers\Log::add('Template table drop', 'update_tables', 'x');
                     
                     return true;
                     
                 } catch (\Exception $e) {
                     
+                    \X\Helpers\Log::add('Error', 'update_tables', 'x');
+                    \X\Helpers\Log::add($e, 'update_tables', 'x');
+                    
                     if ($connection->isTableExists($tmp_tableName)) {
+                        
                         if ($connection->isTableExists($tableName)) {
                             $connection->query('DROP TABLE '.$tableName);
                         }
@@ -86,6 +105,7 @@ namespace X\Abstraction {
                     
                 }
                 
+                // если не удалось обновить таблицу с сохранением данных
                 if (static::ALLOWED_RECREATE === true) {
                     static::dropTable();
                     return static::createTable();

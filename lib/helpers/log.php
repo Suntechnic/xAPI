@@ -7,10 +7,11 @@ namespace X\Helpers
         
         const LOCKDIR = 'locks';
         
-        public static function add($msg, $file, $agent='x', $rewrite=false) {  
+        public static function add($msg, $file, $agent='x', $rewrite=false) {
+
             if (!defined('S_P_LOG')) return;
             $dir = S_P_LOG.'/'.$agent;
-            if (!file_exists($dir)) mkdir($dir);
+            if (!file_exists($dir)) mkdir($dir, 0755, true);
             if (is_array($msg)) $msg = print_r($msg,true);
             $msg = '['.date('d-m-Y H:i:s').'] '.$msg;
             if ($rewrite) {
