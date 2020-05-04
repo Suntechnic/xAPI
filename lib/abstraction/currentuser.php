@@ -47,12 +47,24 @@ namespace X\Abstraction {
         }
         
         // 
-        public function getData () {
+        public function getData ($arParams=[]) {
             if ($this->id > 0) {
-                if (!$this->Data) {
-                    $this->Data = [];
-                    $arSelectUF = $this->getSelectUF();
+                
+                if ($arParams['select'] || $arParams['select_uf'])  {
+                    $arSelectFields = is_array($arParams['select'])?$arParams['select']:[];
+                    $arSelectUF = is_array($arParams['select_uf'])?$arParams['select_uf']:[];
+                    sort($arSelectFields); sort($arSelectUF);
+                    $memokey = md5(serialize($arSelectFields).':'.serialize($arSelectUF));
+                } else {
                     $arSelectFields = $this->getSelectFields();
+                    $arSelectUF = $this->getSelectUF();
+                    $memokey = '_';
+                }
+                
+                
+                if (!$this->Data[$memokey]) {
+                    $arData = [];
+                    
                     $rsUsers = \CUser::GetList(
                             ($by='id'), ($order='desc'),
                             array('ID'=>$this->id),
@@ -61,11 +73,12 @@ namespace X\Abstraction {
                                     'SELECT' => $arSelectUF
                                 )
                         ); //
-                    if ($arUser = $rsUsers->Fetch()) $this->Data = $arUser;
+                    if ($arUser = $rsUsers->Fetch()) $arData = $arUser;
+                    $this->Data[$memokey] = $arData;
                 }
+                
+                return $this->Data[$memokey];
             } else return array();
-            
-            return $this->Data;
         }
         
         
