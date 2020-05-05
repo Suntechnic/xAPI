@@ -8,33 +8,25 @@ namespace X\Abstraction {
             if (!isset(static::$instance)) {
                 static::$instance = new static();
             }
+            
             return static::$instance;
         }
         
         protected final function __clone() {}
         protected final function __wakeup() {}
-        protected function __construct() {
-            $uid = 0;
-            global $USER;
-            if (is_a($USER,'CUser')) $uid = intval($USER->GetID());
-            $this->id = $uid;
-        }
+        protected function __construct() {}
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-        protected $id;
         protected $Data=false;
         protected $Groups=false;
         
         // 
         public function GetID()
         {
-            if ($this->id == 0) { // возомжно юзер залогинился
-                global $USER;
-                if (is_a($USER,'CUser')) $uid = intval($USER->GetID());
-                if ($uid) $this->id = $uid;
-            }
-            return $this->id;
+            global $USER;
+            if (is_a($USER,'CUser')) return intval($USER->GetID());
+            return 0;
         }
         
         // 
@@ -48,7 +40,8 @@ namespace X\Abstraction {
         
         // 
         public function getData ($arParams=[]) {
-            if ($this->id > 0) {
+            $id = $this->GetID();
+            if ($id > 0) {
                 
                 if ($arParams['select'] || $arParams['select_uf'])  {
                     $arSelectFields = is_array($arParams['select'])?$arParams['select']:[];
@@ -62,12 +55,12 @@ namespace X\Abstraction {
                 }
                 
                 
-                if (!$this->Data[$memokey]) {
+                if (!$this->Data[$id][$memokey]) {
                     $arData = [];
                     
                     $rsUsers = \CUser::GetList(
                             ($by='id'), ($order='desc'),
-                            array('ID'=>$this->id),
+                            array('ID'=>$id),
                             array(
                                     'FIELDS' => $arSelectFields,
                                     'SELECT' => $arSelectUF
@@ -77,20 +70,21 @@ namespace X\Abstraction {
                     $this->Data[$memokey] = $arData;
                 }
                 
-                return $this->Data[$memokey];
+                return $this->Data[$id][$memokey];
             } else return array();
         }
         
         
         // возвращает массив групп в которые входит пользователь
         public function getGroups () {
-            if ($this->id > 0) {
-                if (!$this->Groups) {
-                    $this->Groups = \CUser::GetUserGroup($this->id);
+            $id = $this->GetID();
+            if ($id > 0) {
+                if (!$this->Groups[$id]) {
+                    $this->Groups[$id] = \CUser::GetUserGroup($id);
                 }
             } else return array();
             
-            return $this->Groups;
+            return $this->Groups[$id];
         }
         
         // возвращает справочник пользовательских полей
