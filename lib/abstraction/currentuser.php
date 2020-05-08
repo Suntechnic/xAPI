@@ -42,7 +42,6 @@ namespace X\Abstraction {
         public function getData ($arParams=[]) {
             $id = $this->GetID();
             if ($id > 0) {
-                
                 if ($arParams['select'] || $arParams['select_uf'])  {
                     $arSelectFields = is_array($arParams['select'])?$arParams['select']:[];
                     $arSelectUF = is_array($arParams['select_uf'])?$arParams['select_uf']:[];
@@ -53,7 +52,6 @@ namespace X\Abstraction {
                     $arSelectUF = $this->getSelectUF();
                     $memokey = '_';
                 }
-                
                 
                 if (!$this->Data[$id][$memokey]) {
                     $arData = [];
@@ -67,7 +65,7 @@ namespace X\Abstraction {
                                 )
                         ); //
                     if ($arUser = $rsUsers->Fetch()) $arData = $arUser;
-                    $this->Data[$memokey] = $arData;
+                    $this->Data[$id][$memokey] = $arData;
                 }
                 
                 return $this->Data[$id][$memokey];
