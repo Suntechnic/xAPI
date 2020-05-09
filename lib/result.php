@@ -5,32 +5,91 @@ namespace X;
 class Result extends \Bitrix\Main\Result
 {
 	/** @var array */
-	protected $id = false;
-	protected $ids = [];
+	protected $id = false; // полседний id
+	protected $ide = []; // Именованные id
+	protected $ids = []; // стэк id
+	protected $bx_results = []; // стэк результатов
 
 	public function __construct()
 	{
 		parent::__construct();
 	}
-
-	public function setId($id,$entity=false)
-	{
-		$this->id = $id;
-		if ($entity) $this->ids[$entity] = $id;
-	}
 	
-	public function getId($entity=false)
+	/**
+	 * Возвращает id или именованный, связанный с сущностью id
+	 *
+	 * @param mixed $entity
+	 * @return mixed
+	 */
+	public function getId ($entity=false)
 	{
-		if ($entity) $this->ids[$entity] = $id;
-		
+		if ($entity) return $this->ide[$entity];
 		return $this->id;
 	}
+	#
 	
+	/**
+	 * Возвращает result и смещает указатель
+	 *
+	 * @param mixed $entity
+	 * @return mixed
+	 */
+	public function get ()
+	{
+		$r = current($this->bx_results);
+		next($this->bx_results);
+		return $r;
+	}
+	#
+	
+	/**
+	 * Add the id to stack
+	 *
+	 * @param mixed $id, mixed $entity
+	 * @return $this
+	 */
+	public function addId ($id,$entity=false)
+	{
+		$this->ids[] = $id;
+		return $this->setId($id,$entity);
+	}
+	#
+	
+	/**
+	 * Set the id out stack
+	 *
+	 * @param mixed $id, mixed $entity
+	 * @return $this
+	 */
+	public function setId ($id,$entity=false)
+	{
+		$this->id = $id;
+		if ($entity) $this->ide[$entity] = $id;
+		return $this;
+	}
+	#
+	
+	/**
+	 * Add the result.
+	 *
+	 * @param Result $result
+	 * @return $this
+	 */
+	public function add ($result)
+	{
+		$this->addId($result->getId());
+		if (!$result->isSuccess()) {
+			$this->addErrors($result->getErrors());
+		}
+		$this->bx_results[] = $result;
+		return $this;
+	}
+	#
 	
 	/**
 	 * Adds the error.
 	 *
-	 * @param Error $error
+	 * @param Error $error or string $error
 	 * @return $this
 	 */
 	public function addError($error)
@@ -38,11 +97,12 @@ class Result extends \Bitrix\Main\Result
 		if (!is_a($error,'\Bitrix\Main\Error')) $error = new \Bitrix\Main\Error($error);
 		return parent::addError($error);
 	}
+	#
 
 	/**
 	 * Adds array of Error objects
 	 *
-	 * @param Error[] $errors
+	 * @param Error[] $errors or string[] $errors
 	 * @return $this
 	 */
 	public function addErrors(array $errors)
@@ -55,4 +115,5 @@ class Result extends \Bitrix\Main\Result
 		
 		return parent::addErrors($errors);
 	}
+	#
 }
