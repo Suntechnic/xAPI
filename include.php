@@ -163,6 +163,14 @@ if (APPLICATION_ENV != 'production'
         $arAutoload[$entety] = str_replace(S_,'',$file); // ! Внимание - наивное предположение
     }
     
+    
+    // хелперы
+    $arFilesHelpers = glob(S_P_X.'/helpers/[abcdefghijklmnopqrstuvwxyz]*.php');
+    foreach ($arFilesHelpers as $file) {
+        $helper = '\\Helpers\\'.ucfirst(str_replace('.php','',basename($file)));
+        $arAutoload[$helper] = str_replace(S_,'',$file); // ! Внимание - наивное предположение
+    }
+    
 	// на продакшене сохраняем в папку 
     if (APPLICATION_ENV == 'production') {
         file_put_contents(S_P_X.'/config_cache/autoload',serialize($arAutoload));
