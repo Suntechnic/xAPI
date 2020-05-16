@@ -122,7 +122,7 @@ namespace X\Abstraction {
          * добавляет стиль
         */
         public function addCssSource($path,$place='head',$attrs=[]) { if($this->_register($path)) return;
-            if (!strpos($path,'?'))$path = $path.'?v='.APPLICATION_VERSION;
+            if (!strpos($path,'?')) $path = $path.'?v='.(APPLICATION_ENV=='dev'?time():APPLICATION_VERSION);
             $str = '<link href="'.$path.'" type="text/css"  rel="stylesheet"';
             if ($attrs) $str.= ' '.\X\Helpers\Html::attrs($attrs);
             $str.= ' />';
@@ -142,7 +142,7 @@ namespace X\Abstraction {
          * добавляет js
         */
         public function addJsSource($path,$place='head',$attrs=[]) { if($this->_register($path)) return;
-            if (!strpos($path,'?'))$path = $path.'?v='.APPLICATION_VERSION;
+            if (!strpos($path,'?')) $path = $path.'?v='.(APPLICATION_ENV=='dev'?time():APPLICATION_VERSION);
             $str = '<script type="text/javascript" src="'.$path.'"';
             if ($attrs) $str.= ' '.\X\Helpers\Html::attrs($attrs);
             $str.= '></script>';
