@@ -1,5 +1,5 @@
 <?
-define('BX_COMP_MANAGED_CACHE', true);
+//define('BX_COMP_MANAGED_CACHE', true);
 include(__DIR__.'/version.php');
 define('XDEFINE_VERSION', $arModuleVersion['VERSION']);
 define('XDEFINE_STARTMICROTIME',microtime(true));
@@ -7,7 +7,7 @@ define('XDEFINE_STARTMICROTIME',microtime(true));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // init config
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+die('<-- xdebug --<pre>'.print_r($arResult,true).'</pre>-->');
 $local_dir = '/local';
 $root_dir = $_SERVER['DOCUMENT_ROOT'];
 
@@ -134,7 +134,7 @@ if (APPLICATION_ENV != 'production'
             '\X\Abstraction\UsersModel'                 => 'lib/abstraction/usersmodel.php',
             '\X\Abstraction\CurrentUser'                => 'lib/abstraction/currentuser.php',
             
-            // продтомодель
+            // протомодель
             '\X\Abstraction\Protomodel\Filestorage'     => 'lib/abstraction/protomodel/filestorage.php',
             '\X\Abstraction\Protomodel\Stringstorage'   => 'lib/abstraction/protomodel/stringstorage.php',
             
