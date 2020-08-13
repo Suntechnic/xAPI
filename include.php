@@ -1,6 +1,6 @@
 <?
 //define('BX_COMP_MANAGED_CACHE', true);
-include(__DIR__.'/version.php');
+include(__DIR__.'/install/version.php');
 define('XDEFINE_VERSION', $arModuleVersion['VERSION']);
 define('XDEFINE_STARTMICROTIME',microtime(true));
 

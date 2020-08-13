@@ -18,6 +18,23 @@
 \Bitrix\Main\Loader::includeModule('x.api');
 
 
+## В файле /local/x/config.php можно переопределить ряд констант
+Разместите в нём следующий код возвращающий массив констант:
+*
+<?
+return array(
+        // окружение приложения
+        'APPLICATION_ENV' => 'dev',
+        // версия реализации
+        'APPLICATION_VERSION' => '0',
+        // файл версионирования
+        //'APPLICATION_VERSION_FILE' => '/.git/logs/HEAD',
+        // соль приложения
+        'XDEFINE_SALT' => 'salt',
+        'XDEFINE_CACHETIME' => 129600
+    );
+*
+
 ## Список констант
 APPLICATION_ENV - состояне приложения - [dev|combo|production]. В состояниях dev и combo загружается отладчик
   
