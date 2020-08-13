@@ -20,6 +20,8 @@ $arConstantsDefault = array(
         'APPLICATION_VERSION' => '0',
         // файл версионирования
         //'APPLICATION_VERSION_FILE' => '/.git/logs/HEAD',
+        // уровень логирования
+        'APPLICATION_LOGLEVEL' => 0,
         // директория приложения
         'P_' => $local_dir,
         // системный путь к корневой папке
@@ -28,7 +30,7 @@ $arConstantsDefault = array(
         'XDEFINE_SALT' => 'salt',
         'XDEFINE_CACHETIME' => 129600
     );
-
+// загрузка дефолтной конфигурации
 foreach ($arConstantsDefault as $name=>$val) if (!isset($arConstants[$name])) $arConstants[$name] = $arConstantsDefault[$name];
 
 // версия имплементации приложения
@@ -37,10 +39,15 @@ if ($arConstants['APPLICATION_VERSION_FILE']
     $arConstants['APPLICATION_VERSION'] = filemtime($_SERVER['DOCUMENT_ROOT'].$arConstants['APPLICATION_VERSION_FILE']);
 } elseif (!isset($arConstants['APPLICATION_VERSION'])) $arConstants['APPLICATION_VERSION'] = 0;
 
-// переопределение времени кэширования на сервере разработки
+// переопределение времени кэширования и уровня логирования
 if ($arConstants['APPLICATION_ENV'] != 'production') {
     $arConstants['XDEFINE_CACHETIME'] = 120;
-    if ($arConstants['APPLICATION_ENV'] == 'dev') $arConstants['XDEFINE_CACHETIME'] = 8;
+    if ($arConstants['APPLICATION_LOGLEVEL'] < 4) $arConstants['APPLICATION_LOGLEVEL'] == 4;
+    
+    if ($arConstants['APPLICATION_ENV'] == 'dev') {
+        $arConstants['XDEFINE_CACHETIME'] = 8;
+        $arConstants['APPLICATION_LOGLEVEL'] == 5;
+    }
 }
 
 // id инфоблоков
