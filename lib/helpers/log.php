@@ -1,5 +1,23 @@
 <?
 // \X\Helpers\Log::add($msg, $file, $agent);
+
+
+//CEventLog::Add(array(
+//        "SEVERITY" => "SECURITY",
+//        /*
+//        SEVERITY
+//        - SECURITY
+//        - ERROR
+//        - WARNING
+//        - INFO
+//        - DEBUG
+//        */
+//        "AUDIT_TYPE_ID" => "MY_OWN_TYPE",
+//        "MODULE_ID" => "main",
+//        "ITEM_ID" => 123,
+//        "DESCRIPTION" => "Какое-то описание",
+//    ));
+
 namespace X\Helpers
 {
     class Log
@@ -13,10 +31,26 @@ namespace X\Helpers
             $dir = S_P_LOG.'/'.$agent;
             if (!file_exists($dir)) mkdir($dir, 0755, true);
             if (is_array($msg)) $msg = print_r($msg,true);
-            $msg = '['.date('d-m-Y H:i:s').'] '.$msg;
+            $msg = '['.date('d-m-Y H:i:s').'] '.$msg."\n";
+            $path = $dir.'/'.$file.'.txt';
             if ($rewrite) {
-                file_put_contents($dir.'/'.$file.'.txt',$msg."\n");
-            } else file_put_contents($dir.'/'.$file.'.txt',$msg."\n",FILE_APPEND);
+                if ($stream = fopen($path, 'w')) {
+                    self::_write($stream, $msg);
+                    fclose($stream);
+                }
+            } else {
+                if ($stream = fopen($path, 'a')) {
+                    self::_write($stream, $msg);
+                    fclose($stream);
+                }
+            }
+        }
+        
+        private static function _write ($stream, $data) {  
+            flock($stream, LOCK_EX);
+            fwrite($stream, $data);
+            fflush($stream);
+            flock($stream, LOCK_UN);
         }
         
         /*
