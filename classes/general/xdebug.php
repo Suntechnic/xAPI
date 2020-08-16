@@ -89,7 +89,6 @@ class XDebug
      * Вызывается любым методом при старте
      *
      */
-    
     private static function init () {
         if (self::$init) return;
         self::$init = true;

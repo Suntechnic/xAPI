@@ -2,6 +2,15 @@
 
 namespace X;
 
+/*
+* пример создания результата:
+*
+	$result = new \X\Result;
+	$result->addId($arAction['UUID']);
+	$result->addError('Доступ запрещён');
+	$this->log($result, 'Невозможно добавить action так как пользователь неавторизован');
+*/
+
 class Result extends \Bitrix\Main\Result
 {
 	/** @var array */

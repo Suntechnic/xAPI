@@ -69,10 +69,14 @@ if (\Bitrix\Main\Loader::includeModule('iblock')) {
 					),
 				true
 			);
+        
         while($ar_res = $res->Fetch()) {
             if ($ar_res['CODE'] == '') continue;
             $constName = 'IDIB_'.strtoupper($ar_res['CODE']);
-            if (isset($arConstants[$constName])) die($constName.' уже ожидается <pre>'.print_r($arConstants,true).'</pre>');
+            if (isset($arConstants[$constName])) {
+                //TODO: добавить логирования повтора ИБ с одинаковым кодом.
+                //die($constName.' уже ожидается <pre>'.print_r($arConstants,true).'</pre>');
+            }
             $arConstants[$constName] = $ar_res['ID'];
         }
         
@@ -132,11 +136,18 @@ if (APPLICATION_ENV != 'production'
     
     Bitrix\Main\Loader::registerAutoLoadClasses('x.api',  array(
             // абстрация
+            
             '\X\Abstraction\App'                        => 'lib/abstraction/app.php',
             '\X\Abstraction\Singleton'                  => 'lib/abstraction/singleton.php',
+            
+            '\X\Abstraction\EntityTable'                => 'lib/abstraction/entitytable.php',
+            
+            '\X\Abstraction\Model'                      => 'lib/abstraction/model.php',
             '\X\Abstraction\HLBModel'                   => 'lib/abstraction/hlbmodel.php',
             '\X\Abstraction\IBModel'                    => 'lib/abstraction/ibmodel.php',
-            '\X\Abstraction\EntityTable'                => 'lib/abstraction/entitytable.php',
+            '\X\Abstraction\EntityModel'                => 'lib/abstraction/entitymodel.php',
+            
+            
             '\X\Abstraction\Users'                      => 'lib/abstraction/users.php',
             '\X\Abstraction\UsersModel'                 => 'lib/abstraction/usersmodel.php',
             '\X\Abstraction\CurrentUser'                => 'lib/abstraction/currentuser.php',

@@ -1,73 +1,27 @@
 <?
 namespace X\Abstraction {
-    abstract class IBModel {
-    
-        static $instances = [];
+    abstract class IBModel extends Model {
         
-        public static function getInstance() {
-            if (!isset(static::$instances[static::IDIB])) {
-                static::$instances[static::IDIB] = new static(static::IDIB);
-            }
-            return static::$instances[static::IDIB];
-        }
+        const MODEL = 'iblock';
         
-        /* Пример установки кэша
-         * по умолчанию
-        protected $cTime = 14400; // 4 часа
-         * для отдельного метода
-        protected $cTimes = [
-                'getCnt' => 18000 // 5 часов
-            ];
-        */
-        
-        protected function __construct($uid) {
-            if (!$uid) die('Invalid IBlock Id: '.$uid);
-            \CModule::IncludeModule('iblock');
-            
-            // дефолты
-            if ($this->Select) $this->_Select = $this->Select;
-            
-            
-            // предустановка свойств
-            $this->cDir = '/x/data/iblock_'.$uid;
-            if (!$this->cTime) $this->cTime = XDEFINE_CACHETIME; // время кэширования выборок элементов 
-            if (!$this->cMultiplex) $this->cMultiplex = 10; // множетель времени кэширования разделов и свойств
-            if (!$this->cTimes) $this->cTimes = array(); // расчитанное время кэширования по методам
-        }
-        
-        protected final function __clone() {}
-        protected final function __wakeup() {}
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        /* возвращает время кэширования для метода
-         * или устанавливает для каждого метода отдельно
-         * или устанавливает базовое время если метод указан как *
-         * $method - имя метода для которого надо установить/вернуть время кэширования
-         * $time - время кэширования в секундах, если false - просто возвращает текущее значение
-         */
-        public function cacheTime ($method='*',$time=false) {
-            
-            if ($time) {
-                $time = intval($time);
-                if ($time > 0) {
-                    if ($method=='*') {
-                        $this->cTime = $time;
-                    } else $this->cTimes[$method] = $time;
-                }
-            }
-            
-            if ($this->cTimes[$method]) return $this->cTimes[$method];
-            
-            $baseCacheTime = $this->cTime + $this::IDIB; // для разных блоков разное,
-                                                        // чтобы кэш не выбивало одновременно
-            if ('getElement' == $method || 'getDict' == $method) {
-                $this->cTimes[$method] = $baseCacheTime;
+        public static function getInstance($ID=false) {
+            if ($ID) {
+                $ID = $ID;
             } else {
-                $this->cTimes[$method] = $baseCacheTime*$this->cMultiplex;
+                $ID = static::IDIB;
             }
             
-            return $this->cTimes[$method];
+            return parent::getInstance($ID);
         }
+        
+        protected function __construct($ID) {
+            if (!$ID) die('Invalid IBlock Id: '.$ID);
+            $this->ID = $ID;
+            
+            return parent::__construct($ID);
+        }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         
         /* сбрасывает тегированный кэш
@@ -76,25 +30,18 @@ namespace X\Abstraction {
             $arInvalida = [];
             global $CACHE_MANAGER;
             if (!$arSub) { // если теги не переданые - скидываем все
-                $arInvalida[] = 'x_iblock_id_'.$this::IDIB;
-                $CACHE_MANAGER->ClearByTag('x_iblock_id_'.$this::IDIB);
+                $arInvalida[] = 'x_iblock_id_'.$this->ID;
+                $CACHE_MANAGER->ClearByTag('x_iblock_id_'.$this->ID);
             } else {
                 foreach ($arSub as $sub) {
-                    $arInvalida[] = 'x_iblock_id_'.$this::IDIB.'_'.$sub;
-                    $CACHE_MANAGER->ClearByTag('x_iblock_id_'.$this::IDIB.'_'.$sub);
+                    $arInvalida[] = 'x_iblock_id_'.$this->ID.'_'.$sub;
+                    $CACHE_MANAGER->ClearByTag('x_iblock_id_'.$this->ID.'_'.$sub);
                 }
             }
         }
         
-        /* возвращает ключ кэширования
-         */
-        public function cacheKey ($params) {
-            $key = md5(serialize($params));
-            return $key;
-        }
-        
         // возвращает ID инфоблока
-        public function getId() {return $this::IDIB;}
+        public function getId() {return $this->ID;}
         
         // возвращает Раздел
         public function getSection ($arFilter,$arSelect=false,$arOrder=false,$count=false) {
@@ -122,7 +69,7 @@ namespace X\Abstraction {
             if (!$arOrder) $arOrder = Array(
                     'SORT'=>'ASC'
                 );
-            $arFilter['IBLOCK_ID'] = $this::IDIB;
+            $arFilter['IBLOCK_ID'] = $this->ID;
             
             \XDebug::log(
                     array(
@@ -130,7 +77,7 @@ namespace X\Abstraction {
                             'select'=>$arSelect,
                             'order'=>$arOrder,
                         ),
-                    'call getSections for '.$this::IDIB
+                    'call getSections for '.$this->ID
                 );
             $db_res = \CIBlockSection::GetList(
                     $arOrder,
@@ -211,12 +158,12 @@ namespace X\Abstraction {
                     }
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB.'_element_'.$result['ID']);
+                    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID.'_element_'.$result['ID']);
                     //$CACHE_MANAGER->StartTagCache($this->cDir.'/'.$cacheSubDir); { // Теги для групп элементов
-                    //    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB.'_'.$cacheSubDir);
+                    //    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID.'_'.$cacheSubDir);
                     //    $CACHE_MANAGER->StartTagCache($this->cDir); { // общие теги для ИБ
                     //        $CACHE_MANAGER->RegisterTag('x_iblock');
-                    //        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB);
+                    //        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID);
                     //    } $CACHE_MANAGER->EndTagCache();
                     //} $CACHE_MANAGER->EndTagCache();
                 } $CACHE_MANAGER->EndTagCache();
@@ -236,7 +183,7 @@ namespace X\Abstraction {
                             'cachekey' => $cacheKey,
                             'result' => $result
                         ),
-                    'call getElement for '.$this::IDIB.($cacheKey?' (from cache)':'')
+                    'call getElement for '.$this->ID.($cacheKey?' (from cache)':'')
                 );
             
             return $result;
@@ -289,7 +236,7 @@ namespace X\Abstraction {
                             'cachetime' => $cacheTime,
                             'cachekey' => $cacheKey
                         ),
-                    'call getCnt for '.$this::IDIB.($cacheKey?' (from cache)':'')
+                    'call getCnt for '.$this->ID.($cacheKey?' (from cache)':'')
                 );
             return $CNT;
         }
@@ -355,16 +302,16 @@ namespace X\Abstraction {
                     
                     
                     foreach ($arElms as $arElm) {
-                        //print ('<!-- regtag:'.$this->cDir.'/'.$cacheSubDir.'/'.$cacheKey.' --<pre>'.print_r('x_iblock_id_'.$this::IDIB.'_element_'.$arElm['ID'],true).'</pre>-->');
-                        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB.'_element_'.$arElm['ID']);
+                        //print ('<!-- regtag:'.$this->cDir.'/'.$cacheSubDir.'/'.$cacheKey.' --<pre>'.print_r('x_iblock_id_'.$this->ID.'_element_'.$arElm['ID'],true).'</pre>-->');
+                        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID.'_element_'.$arElm['ID']);
                     }
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     //$CACHE_MANAGER->StartTagCache($this->cDir.'/'.$cacheSubDir); { // Теги для групп элементов
-                    //    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB.'_'.$cacheSubDir);
+                    //    $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID.'_'.$cacheSubDir);
                     //    $CACHE_MANAGER->StartTagCache($this->cDir); { // общие теги для ИБ
                     //        $CACHE_MANAGER->RegisterTag('x_iblock');
-                    //        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB);
+                    //        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID);
                     //    } $CACHE_MANAGER->EndTagCache();
                     //} $CACHE_MANAGER->EndTagCache();
                 } $CACHE_MANAGER->EndTagCache();
@@ -382,7 +329,7 @@ namespace X\Abstraction {
                             'cachetime' => $cacheTime,
                             'cachekey' => $cacheKey
                         ),
-                    'call getDict for '.$this::IDIB.($cacheKey?' (from cache)':'')
+                    'call getDict for '.$this->ID.($cacheKey?' (from cache)':'')
                 );
             return $arElms;
         }
@@ -417,7 +364,7 @@ namespace X\Abstraction {
                             'order'=>$arOrder,
                             'nav' => $arNav
                         ),
-                    'call getPage for '.$this::IDIB
+                    'call getPage for '.$this->ID
                 );
             
             $db_res = \CIBlockElement::GetList(
@@ -496,40 +443,23 @@ namespace X\Abstraction {
                             'order'=>$arOrder,
                             'result'=>$arElms
                         ),
-                    'call getReference for '.$this::IDIB
+                    'call getReference for '.$this->ID
                 );
             
             
             return $arElms;
         }
         
-        /*
-         * Возращает фильтр для GetList
-         * и сбрасывает одноразовый фильтр
-         */
-        public function getFilter () {
-            if (isset($this->disposableParams['filter'])) {
-                $arFilter = $this->disposableParams['filter'];
-                unset($this->disposableParams['filter']);
-            } else $arFilter = $this->Filter;
-            
-            if (!is_array($arFilter)) $arFilter=array();
-            
-            return $arFilter;
-        }
-        
-        
-        
         
         /*
-         * Исполтьзуется во внутренних методах - обертка над __getFilter
+         * Исполтьзуется во внутренних методах - обертка над getFilter
          * добавляет id инфоблока, чтобы гарантировать инфоблок
          * и разворачивает подзапросы
         */
         private function __getFilter () {
 
             
-            $arFilter = $this->getFilter();
+            $arFilter = parent::__getFilter();
             //$this->lastFilter = $arFilter;
             
             $arFilter['IBLOCK_ID'] = $this->GetID();
@@ -593,66 +523,6 @@ namespace X\Abstraction {
             return \CIBlockElement::SubQuery('PROPERTY_'.$property,$this->__getFilter());
         }
         
-        
-        
-        public function getSelect () {
-            if (isset($this->disposableParams['select'])) {
-                $arSelect = $this->disposableParams['select'];
-                unset($this->disposableParams['select']);
-            } else $arSelect = $this->Select;
-            
-            if (!is_array($arSelect)) $arSelect=array();
-            return $arSelect;
-        }
-        private function __getSelect () {
-            $arSelect = $this->getSelect();
-            //$this->lastSelect = $arSelect;
-            return $arSelect;
-        }
-        
-        
-        public function getOrder () {
-            if (isset($this->disposableParams['order'])) {
-                $arOrder = $this->disposableParams['order'];
-                unset($this->disposableParams['order']);
-            } else $arOrder = $this->Order;
-
-            if (!is_array($arOrder)) $arOrder=array();
-            return $arOrder;
-        }
-        private function __getOrder () {
-            $arOrder = $this->getOrder();
-            //$this->lastOrder = $arOrder;
-            return $arOrder;
-        }
-    
-        
-        
-        public function resetSelect () {
-            if ($this->_Select) $this->Select=$this->_Select;
-            unset($this->disposableParams['select']);
-            return $this;
-        }
-        
-        public function setFilter ($arFilter) {$this->Filter=$arFilter; return $this;}
-        public function setSelect ($arSelect) {$this->Select=$arSelect; return $this;}
-        public function setOrder ($arOrder) {$this->Order=$arOrder; return $this;}
-        
-        public function add2Filter ($arFilter) {$this->Filter=array_merge($this->Filter,$arFilter); return $this;}
-        public function add2Select ($arSelect) {$this->Select=array_merge($this->Select,$arSelect); return $this;}
-        public function add2Order ($arOrder) {$this->Order=array_merge($this->Order,$arOrder); return $this;}
-        
-        /*
-         * Устанавливает одноразове параметры сортировки фильтрации и выбора
-         * которые будут сброшены после одного использования
-         */
-        public function setParams ($arParams) {
-            $this->disposableParams = array();
-            if ($arParams['order']) $this->disposableParams['order']=$arParams['order'];
-            if ($arParams['filter']) $this->disposableParams['filter']=$arParams['filter'];
-            if ($arParams['select']) $this->disposableParams['select']=$arParams['select'];
-            return $this;
-        }
         
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// добавление
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// и апдейт элементов
@@ -727,7 +597,7 @@ namespace X\Abstraction {
             //        ARRAY_FILTER_USE_KEY
             //    );
             if (array_key_exists($arFields['ID'])) unset($arFields['ID']);
-            $arFields['IBLOCK_ID'] = $this::IDIB;
+            $arFields['IBLOCK_ID'] = $this->ID;
             if (
                     is_array($arProps) &&
                     count($arProps)
@@ -765,7 +635,7 @@ namespace X\Abstraction {
             $ID = intval($arFields['ID']);
             if ($arFields['ID'] > 0) {
                 unset($arFields['ID']);
-                $arFields['IBLOCK_ID'] = $this::IDIB;
+                $arFields['IBLOCK_ID'] = $this->ID;
                 if (
                         is_array($arProps) &&
                         count($arProps)
@@ -830,7 +700,7 @@ namespace X\Abstraction {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// со свойствами
         // возвращает словарь свойств
         public function getPropsDict ($arFilter=array(),$key='ID') {
-            $arFilter['IBLOCK_ID'] = $this::IDIB;
+            $arFilter['IBLOCK_ID'] = $this->ID;
             
             $cacheKey = 'IBModel_getPropsDict_'.$this->cacheKey(array('filter'=>$arFilter,'key'=>$key));
             $obCache = new \CPHPCache();
@@ -858,7 +728,7 @@ namespace X\Abstraction {
                             $db_enum_list = \CIBlockProperty::GetPropertyEnum(
                                     $prop_fields['ID'],
                                     Array('sort'=>'asc', 'value'=>'asc'),
-                                    Array('IBLOCK_ID'=>$this::IDIB)
+                                    Array('IBLOCK_ID'=>$this->ID)
                                 );
                             while ($arEnum = $db_enum_list->Fetch()) {
                                 $arEnum['LABEL'] = $arEnum['VALUE'];
@@ -884,7 +754,7 @@ namespace X\Abstraction {
                 if (count($result)) {
                     global $CACHE_MANAGER;
                     $CACHE_MANAGER->StartTagCache($this->cDir.'/'.$cacheSubDir); {
-                        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this::IDIB.'_props');
+                        $CACHE_MANAGER->RegisterTag('x_iblock_id_'.$this->ID.'_props');
                     } $CACHE_MANAGER->EndTagCache();
                     $obCache->EndDataCache($result);
                 } else $obCache->AbortDataCache();
