@@ -456,7 +456,7 @@ namespace X\Abstraction {
          * добавляет id инфоблока, чтобы гарантировать инфоблок
          * и разворачивает подзапросы
         */
-        private function __getFilter () {
+        protected final function __getFilter () {
 
             
             $arFilter = parent::__getFilter();
