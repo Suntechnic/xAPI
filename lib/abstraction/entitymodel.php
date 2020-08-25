@@ -115,7 +115,7 @@ namespace X\Abstraction {
                     array(
                             'options'=>$arParams
                         ),
-                    'call ref for '.$this->Table.($cacheKey?' (from cache)':'')
+                    'call lst for '.$this->Table.($cacheKey?' (from cache)':'')
                 );
             
 			return $ref;
