@@ -82,6 +82,27 @@ namespace X\Abstraction {
             return $arUsers;
         }
         
+        // 
+        public function getCnt () {
+            $arFilter = $this->getFilter();
+            $rsUsers = \CUser::GetList(
+                    ($by=$sort['by']), ($order=$sort['order']),
+                    $arFilter,
+                    array(
+                            'SELECT' => ['ID']
+                        )
+                ); //
+            $cnt = $rsUsers->SelectedRowsCount();
+            \XDebug::log(
+                    array(
+                            'filter' => $arFilter,
+                            'result' => $cnt
+                        ),
+                    'call User->getCnt'
+                );
+            return $cnt;
+        }
+        
         public function getFilter () {if (!is_array($this->Filter)) $this->Filter=array();return $this->Filter;}
         public function setFilter ($arFilter) {$this->Filter=$arFilter; return $this;}
         public function add2Filter ($arFilter) {$this->Filter=array_merge($this->Filter,$arFilter); return $this;}
