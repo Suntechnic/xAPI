@@ -42,7 +42,7 @@ namespace X\Abstraction {
                             'fields'=>$arSelectFields,
                             'select'=>$arSelectUF
                         ),
-                    'call User->getDict'
+                    'call Users->getDict'
                 );
             
             $arUsers = array();
@@ -71,7 +71,7 @@ namespace X\Abstraction {
                             'key' => $key,
                             'val'=> $val
                         ),
-                    'call User->getReference'
+                    'call Users->getReference'
                 );
             
             $arUsers = array();
@@ -98,7 +98,7 @@ namespace X\Abstraction {
                             'filter' => $arFilter,
                             'result' => $cnt
                         ),
-                    'call User->getCnt'
+                    'call Users->getCnt'
                 );
             return $cnt;
         }

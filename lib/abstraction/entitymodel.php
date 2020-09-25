@@ -67,6 +67,31 @@ namespace X\Abstraction {
         
         
         /**
+         * возвращает количество элементов
+         *
+         */
+        public function cnt ($arParams=[])
+        {
+            
+			$arParams = $this->getParams($arParams);
+			$res = $this->EntityClass::getList($arParams);
+            
+            $cnt = 0;
+            if ($cntr = $res->getSelectedRowsCount()) $cnt = $cntr;
+            
+            $cacheKey = false;
+            \XDebug::log(
+                    array(
+                            'options'=>$arParams,
+                            'result'=>$cnt
+                        ),
+                    'call cnt for '.$this->Table.($cacheKey?' (from cache)':'')
+                );
+            
+			return $cnt;
+		}
+        
+        /**
          * возвращает список
          *
          */

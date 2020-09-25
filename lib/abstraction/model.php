@@ -181,7 +181,11 @@ namespace X\Abstraction {
         }
 		
 		/**
-         * возвращает параетры вызова
+         * возвращает параметры вызова
+         * устанавливая в переданном массиве $arParams
+         * значения из $arFilter,$arSelect и $arOrder
+         * если в $arParams их нет
+         * т.е. getParams имеет приоритет
          *
          */
         public function getParams (&$arParams)
