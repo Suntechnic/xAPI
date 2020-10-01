@@ -56,13 +56,27 @@ namespace X\Abstraction {
 		}
         
         
-		private function update (
+		public function upd (
                 array $dct
             )
         {
             $result = new \X\Result;
             $result->add($this->EntityClass::update($dct[$this->Primary],$dct));
 			return $result;
+		}
+        
+        
+        public function del (
+                $primary
+            )
+        {
+            $result = new \X\Result;
+            if (!is_array($primary)) $primary = [$primary];
+            foreach ($primary as $prim) {
+                $this->EntityClass::delete($prim);
+            }
+            
+			return true;
 		}
         
         
@@ -97,7 +111,9 @@ namespace X\Abstraction {
          */
         public function lst ($arParams=[])
         {
-            
+            // параметры метода
+            // если в $arParams нет filter, select или order
+            // то будут подставлены текущие
 			$arParams = $this->getParams($arParams);
 			$res = $this->EntityClass::getList($arParams);
             

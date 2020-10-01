@@ -159,10 +159,16 @@ namespace X\Abstraction {
             return $this;
         }
         
+        /*
+        * Функции изменяют текущие фильтр, селект и ордер модели
+        */
         public function setFilter ($arFilter) {$this->Filter=$arFilter; return $this;}
         public function setSelect ($arSelect) {$this->Select=$arSelect; return $this;}
         public function setOrder ($arOrder) {$this->Order=$arOrder; return $this;}
         
+        /*
+         * функции расширяют текущие фильтр, селект и ордер модели
+        */
         public function add2Filter ($arFilter) {$this->Filter=array_merge($this->Filter,$arFilter); return $this;}
         public function add2Select ($arSelect) {$this->Select=array_merge($this->Select,$arSelect); return $this;}
         public function add2Order ($arOrder) {$this->Order=array_merge($this->Order,$arOrder); return $this;}
@@ -190,7 +196,6 @@ namespace X\Abstraction {
          */
         public function getParams (&$arParams)
         {
-            
             $arFilter = $this->__getFilter();
             $arSelect = $this->__getSelect();
             $arOrder = $this->__getOrder();
