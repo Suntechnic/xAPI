@@ -7,9 +7,9 @@
 ## Пример установки
 
 Установите модуль из git:
- *cd bitrix/modules/;
- mkdir x.api;
- cd x.api/;
+ *cd bitrix/modules/;  
+ mkdir x.api;  
+ cd x.api/;  
  git clone https://github.com/Suntechnic/xAPI .*
  
 Добавить в /local/php_interface/init.php первой строкой:  
