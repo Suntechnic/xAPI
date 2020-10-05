@@ -7,15 +7,20 @@
 ## Пример установки
 
 Установите модуль из git:
- *cd bitrix/modules/;  
- mkdir x.api;  
- cd x.api/;  
- git clone https://github.com/Suntechnic/xAPI .*
+```
+cd bitrix/modules/;  
+mkdir x.api;  
+cd x.api/;  
+git clone https://github.com/Suntechnic/xAPI .
+```
  
-Добавить в /local/php_interface/init.php первой строкой:  
+Добавить в /local/php_interface/init.php первой строкой:
+```php
+<?  
 // подключение xAPI  
 // https://github.com/Suntechnic/xAPI/blob/master/README.md  
 \Bitrix\Main\Loader::includeModule('x.api');
+```
 
 
 ## В файле /local/x/config.php можно переопределить ряд констант
