@@ -80,6 +80,33 @@ namespace X\Abstraction {
 		}
         
         
+        
+        /**
+         * возвращает объект навигации
+         * создавая новый если необходимо
+         */
+        public function nav ($idnav=false)
+        {
+            if ($idnav) {
+                if (!$this->navObject || $this->navObject->getId() != $idnav)
+                        $this->navObject = new \Bitrix\Main\UI\PageNavigation($idnav);
+            } else {
+                if (!$this->navObject) return false;
+            }
+			
+			return $this->navObject;
+		}
+        
+        /**
+         * уничтожает текущую нафигацию
+         *
+         */
+        public function navDestroy ($idnav)
+        {
+			$this->navObject = false;
+		}
+        
+        
         /**
          * возвращает количество элементов
          *
@@ -115,7 +142,16 @@ namespace X\Abstraction {
             // если в $arParams нет filter, select или order
             // то будут подставлены текущие
 			$arParams = $this->getParams($arParams);
-			$res = $this->EntityClass::getList($arParams);
+            
+            if ($this->navObject) {
+                $arParams['count_total'] = true;
+                $arParams['offset'] = $this->navObject->getOffset();
+                $arParams['limit'] = $this->navObject->getLimit();
+            }
+            
+            $res = $this->EntityClass::getList($arParams);
+            
+            if ($arParams['count_total'] && $this->navObject) $this->navObject->setRecordCount($res->getCount());
             
             $lst = [];
             while ($dct = $res->fetch()) $lst[] = $dct;
