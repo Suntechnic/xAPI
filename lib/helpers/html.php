@@ -250,12 +250,12 @@ namespace X\Helpers
         #
         
         /* рендерит микрошаблон */
-        public static function render ($tmpl,$data=array())
+        public static function render ($tmpl,$data=array(),$component=false)
         {
+            global $APPLICATION;
             include(S_P_TMPL.'/'.$tmpl.'.php');
         }
         #
-        
         
         
         /*
@@ -274,18 +274,6 @@ namespace X\Helpers
             return $text;
         }
         #
-        
-        // legacy
-        // depricated
-        public static function DeclOfNum ($number, $titles)
-        {
-            \XDebug::log(
-                    'Use depricated function DeclOfNum. Use inclineNum!',
-                    'WARNING!'
-                );
-            return self::inclineNum($number, $titles);
-        }
-        
         
     }
 }
