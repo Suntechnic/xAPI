@@ -100,9 +100,9 @@ define('P_INTERFACE',   P_.'/interface'); // интерфейс AJAX и REST с�
 define('P_LAYOUT',    	P_.'/templates/.default'); // шаблон шаблонов
 define('P_MEDIA',    	P_.'/sources'); // медифайлы
 define('P_CSS',     	P_MEDIA.'/css'); // папка стилей
+define('P_FONTS',     	P_MEDIA.'/fonts'); // папка с шрифтами
 define('P_JS',    		P_MEDIA.'/js'); // папка скриптов
 define('P_IMAGES',    	P_MEDIA.'/img'); // папка с изображениями (например бэкграунды и банеры)
-define('P_PICTURES',  	P_MEDIA.'/pictures'); // папка с картинками (напр. элементы интерфейса и иконки)
 define('P_INCLUDES',  	P_.'/includes'); // папка с другими подключаемыми файлами (svg и tmpl используся X\Helpers\Html)
 define('P_LOG',         P_.'/logs'); // каталог логов
 define('P_SOURCESDUMP', P_.'/__dump'); // свалка данных
@@ -121,7 +121,9 @@ define('S_P_SVG',  	        S_.P_SVG);
 define('S_P_TMPL',  	    S_.P_TMPL);
 define('S_P_CONTENT',  	    S_.P_CONTENT);
 define('S_P_CSS',  	        S_.P_CSS);
+define('S_P_FONTS',  	    S_.P_FONTS);
 define('S_P_JS',  	        S_.P_JS);
+define('S_P_IMAGES',  	    S_.P_IMAGES);
 
 define('S_P_LOG',  	        S_.P_LOG);
 define('S_P_SOURCESDUMP',  	S_.P_SOURCESDUMP);
