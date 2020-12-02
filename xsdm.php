@@ -1,5 +1,5 @@
 <?
-// Source Stack Manager
+// Source Dump Manager
 if (!defined('S_P_SOURCESDUMP')) return; // свалка ресрсов не определена
 
 $path = $_SERVER['REQUEST_URI'];
