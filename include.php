@@ -113,17 +113,17 @@ defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'production');
 
 // дефайн путей
 // P_* путь к папке проекта - как правило local
-define('P_X',           XDEFINE_DIRS['P_X']?XDEFINE_DIRS['P_X']:P_.'/x'); // X - имплементации модели и сущностей
-define('P_INTERFACE',   XDEFINE_DIRS['P_INTERFACE']?XDEFINE_DIRS['P_INTERFACE']:P_.'/interface'); // интерфейс AJAX и REST сервисов
-define('P_LAYOUT',    	XDEFINE_DIRS['P_LAYOUT']?XDEFINE_DIRS['P_LAYOUT']:P_.'/templates/.default'); // шаблон шаблонов
-define('P_MEDIA',    	XDEFINE_DIRS['P_MEDIA']?XDEFINE_DIRS['P_MEDIA']:P_.'/sources'); // медифайлы
-define('P_CSS',     	XDEFINE_DIRS['P_CSS']?XDEFINE_DIRS['P_CSS']:P_MEDIA.'/css'); // папка стилей
-define('P_FONTS',     	XDEFINE_DIRS['P_FONTS']?XDEFINE_DIRS['P_FONTS']:P_MEDIA.'/fonts'); // папка с шрифтами
-define('P_JS',    		XDEFINE_DIRS['P_JS']?XDEFINE_DIRS['P_JS']:P_MEDIA.'/js'); // папка скриптов
-define('P_IMAGES',    	XDEFINE_DIRS['P_IMAGES']?XDEFINE_DIRS['P_IMAGES']:P_MEDIA.'/img'); // папка с изображениями (например бэкграунды и банеры)
-define('P_INCLUDES',  	XDEFINE_DIRS['P_INCLUDES']?XDEFINE_DIRS['P_INCLUDES']:P_.'/includes'); // папка с другими подключаемыми файлами (svg и tmpl используся X\Helpers\Html)
-define('P_LOG',         XDEFINE_DIRS['P_LOG']?XDEFINE_DIRS['P_LOG']:P_.'/logs'); // каталог логов
-define('P_SOURCESDUMP', XDEFINE_DIRS['P_SOURCESDUMP']?XDEFINE_DIRS['P_SOURCESDUMP']:P_.'/__dump'); // свалка данных
+define('P_X',           XDEFINE_DIRS['X']?P_.XDEFINE_DIRS['X']:P_.'/x'); // X - имплементации модели и сущностей
+define('P_INTERFACE',   XDEFINE_DIRS['INTERFACE']?P_.XDEFINE_DIRS['INTERFACE']:P_.'/interface'); // интерфейс AJAX и REST сервисов
+define('P_LAYOUT',    	XDEFINE_DIRS['LAYOUT']?P_.XDEFINE_DIRS['LAYOUT']:P_.'/templates/.default'); // шаблон шаблонов
+define('P_MEDIA',    	XDEFINE_DIRS['MEDIA']?P_.XDEFINE_DIRS['MEDIA']:P_.'/sources'); // медифайлы
+define('P_CSS',     	XDEFINE_DIRS['CSS']?P_.XDEFINE_DIRS['CSS']:P_MEDIA.'/css'); // папка стилей
+define('P_FONTS',     	XDEFINE_DIRS['FONTS']?P_.XDEFINE_DIRS['FONTS']:P_MEDIA.'/fonts'); // папка с шрифтами
+define('P_JS',    		XDEFINE_DIRS['JS']?P_.XDEFINE_DIRS['JS']:P_MEDIA.'/js'); // папка скриптов
+define('P_IMAGES',    	XDEFINE_DIRS['IMAGES']?P_.XDEFINE_DIRS['IMAGES']:P_MEDIA.'/img'); // папка с изображениями (например бэкграунды и банеры)
+define('P_INCLUDES',  	XDEFINE_DIRS['INCLUDES']?P_.XDEFINE_DIRS['INCLUDES']:P_.'/includes'); // папка с другими подключаемыми файлами (svg и tmpl используся X\Helpers\Html)
+define('P_LOG',         XDEFINE_DIRS['LOG']?P_.XDEFINE_DIRS['LOG']:P_.'/logs'); // каталог логов
+define('P_SOURCESDUMP', XDEFINE_DIRS['SOURCESDUMP']?P_.XDEFINE_DIRS['P_SOURCESDUMP']:P_.'/__dump'); // свалка данных
 
 // остальные пути
 define('P_SVG',  	    P_INCLUDES.'/svg'); // папка с svg (используется хелпером)
