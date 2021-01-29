@@ -15,36 +15,27 @@ namespace X\Abstraction\Protomodel {
         
         // возвращает src файла по xml_id
         public function getFileSrc ($xml_id) {
-            $arElement = $this->setFilter(['UF_XML_ID'=>$xml_id])->getElement();
+            $arElement = $this->getElement(['filter'=>['UF_XML_ID'=>$xml_id]]);
             return $arElement['SRC'];
-        }
-        #
-        
-        // возвращает src файла по xml_id
-        public function getFileArray ($xml_id) {
-            $arElement = $this->setFilter(['UF_XML_ID'=>$xml_id])->getElement();
-            return $arElement;
         }
         #
         
         // возвращает запись по xml_id
         public function getFile ($xml_id) {
-            $arFilter = $this->getFilter();
-            $arElement = $this->setFilter(['UF_XML_ID'=>$xml_id])->getElement();
-            $this->setFilter($arFilter);
+            $arElement = $this->getElement(['filter'=>['UF_XML_ID'=>$xml_id]]);
             return $arElement;
         }
         #
         
         // возвращает один первый элеметм
-        public function getElement () {
-            $arElament = parent::getElement();
+        public function getElement ($arParams=[]) {
+            $arElament = parent::getElement($arParams);
             return $this->__procElement($arElament);
         }
         #
         
-        // возвращает словать элементов по указанному ключу
-        public function getDict ($key=false) {
+        // возвращает справочник элементов по указанному ключу
+        public function getReference ($key=false) {
             $arList = parent::getDict($key);
             foreach ($arList as $k=>$arElm) $arList[$k] = $this->__procElement($arElm);
             return $arList;
@@ -53,6 +44,8 @@ namespace X\Abstraction\Protomodel {
         
         //
         private function __procElement ($arElement) {
+            $arElement['NAME'] = $arElement['UF_NAME'];
+            // файл и ссылка
             if ($arElement['UF_URL']) {
                 $arElement['SRC'] = $arElement['UF_URL'];
             } else if ($arElement['UF_FILE']) {

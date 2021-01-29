@@ -1,26 +1,33 @@
 <?
+
 namespace X\Abstraction {
-    abstract class HLBModel {
+    abstract class HLBModel extends Model {
         
-        static $instances = [];
-        public static function getInstance() {
-            if (!isset(static::$instances[static::IDHLB])) {
-                static::$instances[static::IDHLB] = new static(static::IDHLB);
+        const MODEL = 'hlblock';
+        
+        
+        public static function getInstance($ID=false) {
+            if ($ID) {
+                $ID = $ID;
+            } else {
+                $ID = static::IDHLB;
             }
-            return static::$instances[static::IDHLB];
+            
+            return parent::getInstance($ID);
         }
         
-        protected function __construct($uid)
-        {
-            if (!$this::IDHLB) die('Invalid HLBlock Id: '.$this::IDHLB);
+        protected function __construct($ID) {
+            if (!$ID) die('Invalid HLBlock Id: '.$ID);
+            $this->ID = $ID;
+            
             \Bitrix\Main\Loader::includeModule('highloadblock');
-            $this->hlblock = \Bitrix\Highloadblock\HighloadBlockTable::getById($this::IDHLB)->fetch();
+            $this->hlblock = \Bitrix\Highloadblock\HighloadBlockTable::getById($this->ID)->fetch();
             $this->entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($this->hlblock);
-            $this->entity_data_class = $this->entity->getDataClass();
+            $this->EntityClass = $this->entity->getDataClass();
+            
+            return parent::__construct($ID);
         }
         
-        protected final function __clone() {}
-        protected final function __wakeup() {}
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         protected $hlblock;
@@ -29,46 +36,99 @@ namespace X\Abstraction {
         
         // возвращает ID инфоблока
         public function getId() {
-            return $this::IDHLB;
+            return $this->ID;
         }
         #
         
-        // возвращает сущность
-        public function getEntity() {
-            return $this->entity;
+        
+        // возвращает один первый элемент
+        public function getElement ($arParams=[]) {
+            // параметры метода
+            // если в $arParams нет filter, select или order
+            // то будут подставлены текущие
+			$arParams = $this->getParams($arParams);
+            
+            $res = $this->EntityClass::getList($arParams);
+            
+            $lst = [];
+            if ($dct = $res->fetch()) return $dct;
+            
+			return false;
         }
+        #
+        
+        
+        // возвращает список элементов
+        public function getList ($arParams=[]) {
+            // параметры метода
+            // если в $arParams нет filter, select или order
+            // то будут подставлены текущие
+			$arParams = $this->getParams($arParams);
+            
+            $res = $this->EntityClass::getList($arParams);
+            
+            $lst = [];
+            while ($dct = $res->fetch()) $lst[] = $dct;
+            
+            $cacheKey = false;
+            \XDebug::log(
+                    array(
+                            'options'=>$arParams
+                        ),
+                    'call lst for '.$this->EntityClass.($cacheKey?' (from cache)':'')
+                );
+            
+			return $lst;
+        }
+        #
+        
+        
+        /**
+         * возвращает справочник
+         *
+         */
+        public function getReference ($key=false,$arParams=[])
+        {
+            
+            if ($key === false) $key = 'ID';
+            
+            $arParams = $this->getParams($arParams);
+            if (is_array($arParams['select']) // если селект установлен
+                    && count($arParams['select']) // и не пуст
+                    && !in_array($key,$arParams['select']) // но в нем нет ключа
+                ) $arParams['select'][] = $key; // необходимо его добавить
+            
+			$res = $this->EntityClass::getList($arParams);
+            
+            $ref = [];
+            while ($dct = $res->fetch()) $ref[$dct[$key]] = $dct;
+            
+            $cacheKey = false;
+            \XDebug::log(
+                    array(
+                            'options'=>$arParams
+                        ),
+                    'call lst for '.$this->EntityClass.($cacheKey?' (from cache)':'')
+                );
+            
+			return $ref;
+		}
+        
+        
+        ###################################### DEPRICATED ######################################
+        // возвращает сущность
+        public function getEntity() {return $this->entity;}
         #
         
         // возвращает ДатаКласс
-        public function getDataClass() {
-            return $this->entity_data_class;
-        }
+        public function getDataClass() {return $this->EntityClass;}
         #
         
-        // возвращает список элементов
-        public function getList () {
-            return $this->getDict();
-        }
-        #
-        
-        // возвращает один первый элеметм
-        public function getElement () {
-            //$entity_data_class = $this->entity->getDataClass();
-            $entity_data_class = $this->entity_data_class;
-            $rsData = $entity_data_class::getList(array(
-               "select" => array("*"),
-               "filter" => $this->getFilter(),
-               "order" => $this->getOrder()
-            ));
-            if ($arRow = $rsData->Fetch()) return $arRow;   
-            return false;
-        }
-        #
         
         // возвращает словать элементов по указанному ключу
         public function getDict ($key=false,$arSelect=['*']) {
             //$entity_data_class = $this->entity->getDataClass();
-            $entity_data_class = $this->entity_data_class;
+            $entity_data_class = $this->EntityClass;
             $rsData = $entity_data_class::getList(array(
                "select" => $arSelect,
                "filter" => $this->getFilter(),
@@ -88,28 +148,13 @@ namespace X\Abstraction {
         }
         #
         
-        // возвращает справочник ключ-значение
-        public function getReference ($key,$val) {
-            //$entity_data_class = $this->entity->getDataClass();
-            $entity_data_class = $this->entity_data_class;
-            $rsData = $entity_data_class::getList(array(
-               "select" => array($key,$val),
-               "filter" => $this->getFilter(),
-               "order" => $this->getOrder()
-            ));
-            while($arRow = $rsData->Fetch()) {
-                $arRef[$arRow[$key]] = $arRow[$val];   
-            }
-            
-            return $arRef;
-        }
-        #
+
         
         
         // добавляем элемент
         public function add ($arFields) {
-            $entity_data_class = $this->entity_data_class;
-            $result = $this->entity_data_class::add($arFields);
+            $entity_data_class = $this->EntityClass;
+            $result = $this->EntityClass::add($arFields);
             return array(
                     'ID' => $result->getID(),
                     'rs' => $result->isSuccess()
@@ -119,8 +164,8 @@ namespace X\Abstraction {
         
         // обновляет элемент
         public function update ($arFields) {
-            $entity_data_class = $this->entity_data_class;
-            $result = $this->entity_data_class::update($arFields['ID'],$arFields);
+            $entity_data_class = $this->EntityClass;
+            $result = $this->EntityClass::update($arFields['ID'],$arFields);
             return array(
                     'ID' => $result->getID(),
                     'rs' => $result->isSuccess()
@@ -131,30 +176,13 @@ namespace X\Abstraction {
         // удаляем элементы
         public function delete ($arIDs) {
             if (!is_array($arIDs)) $arIDs = [$arIDs];
-            $entity_data_class = $this->entity_data_class;
+            $entity_data_class = $this->EntityClass;
             foreach ($arIDs as $id) {
-                $this->entity_data_class::delete($id);
+                $this->EntityClass::delete($id);
             }
             return true;
         }
         #
-        
-        
-        public function getFilter () {
-            if (!is_array($this->Filter)) $this->Filter=array();
-            return $this->Filter;
-        }
-        
-        public function setFilter ($arFilter) {$this->Filter=$arFilter; return $this;}
-        public function add2Filter ($arFilter) {$this->Filter=array_merge($this->Filter,$arFilter); return $this;}
-        
-        public function getOrder () {
-            if (!is_array($this->Order)) $this->Order=array();
-            return $this->Order;
-        }
-        
-        public function setOrder ($arOrder) {$this->Order=$arOrder; return $this;}
-        public function add2Order ($arOrder) {$this->Order=array_merge($this->Order,$arOrder); return $this;}
         
         
     }

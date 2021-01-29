@@ -111,7 +111,7 @@ namespace X\Abstraction {
          * возвращает количество элементов
          *
          */
-        public function cnt ($arParams=[])
+        public function getCnt ($arParams=[])
         {
             
 			$arParams = $this->getParams($arParams);
@@ -126,7 +126,7 @@ namespace X\Abstraction {
                             'options'=>$arParams,
                             'result'=>$cnt
                         ),
-                    'call cnt for '.$this->Table.($cacheKey?' (from cache)':'')
+                    'call getCnt for '.$this->Table.($cacheKey?' (from cache)':'')
                 );
             
 			return $cnt;
@@ -136,7 +136,7 @@ namespace X\Abstraction {
          * возвращает список
          *
          */
-        public function lst ($arParams=[])
+        public function getList ($arParams=[])
         {
             // параметры метода
             // если в $arParams нет filter, select или order
@@ -161,7 +161,7 @@ namespace X\Abstraction {
                     array(
                             'options'=>$arParams
                         ),
-                    'call lst for '.$this->Table.($cacheKey?' (from cache)':'')
+                    'call getList for '.$this->Table.($cacheKey?' (from cache)':'')
                 );
             
 			return $lst;
@@ -171,7 +171,7 @@ namespace X\Abstraction {
          * возвращает справочник
          *
          */
-        public function ref ($key=false,$arParams=[])
+        public function getReference ($key=false,$arParams=[])
         {
             
             if ($key === false) $key = $this->getPrimary();
@@ -192,11 +192,17 @@ namespace X\Abstraction {
                     array(
                             'options'=>$arParams
                         ),
-                    'call lst for '.$this->Table.($cacheKey?' (from cache)':'')
+                    'call getReference for '.$this->Table.($cacheKey?' (from cache)':'')
                 );
             
 			return $ref;
 		}
+        
+        
+        ###################################### DEPRICATED ######################################
+        public function cnt ($arParams=[]) {return $this->getCnt($arParams)}
+        public function lst ($arParams=[]) {return $this->getList($arParams)}
+        public function ref ($key=false,$arParams=[]) {return $this->getReference($key,$arParams)}
         
         
     }
