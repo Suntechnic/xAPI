@@ -28,7 +28,6 @@ namespace X\Abstraction {
                         'serverinterface' => P_INTERFACE.'/',
                         'css' => P_CSS.'/',
                         'js' => P_JS.'/',
-                        'pictures' => P_PICTURES.'/',
                         'images' => P_IMAGES.'/',
                         'lang' => LANGUAGE_ID,
                         'cookie_name' => $cookie_name,
