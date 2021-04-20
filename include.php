@@ -242,7 +242,7 @@ if (APPLICATION_ENV == 'dev' || APPLICATION_ENV == 'combo') { // сервер р
 
 // экземпляр приложения
 if (!file_exists(S_P_X.'/app.php')) {
-    file_put_contents(S_P_X.'/app.php','<?class App extends \X\Abstraction\App {}');
+    if (!file_put_contents(S_P_X.'/app.php','<?class App extends \X\Abstraction\App {}')) return;
 }
 
 require_once(S_P_X.'/app.php');
