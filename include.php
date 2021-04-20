@@ -229,7 +229,7 @@ if (count($arAutoload)) Bitrix\Main\Loader::registerAutoLoadClasses(null, $arAut
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // init other
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if (class_exists('Kint')) \Kint::$enabled_mode = false;
+
 // отладчик
 if (APPLICATION_ENV == 'dev' || APPLICATION_ENV == 'combo') { // сервер разработки или комбо режим
     require_once(__DIR__.'/classes/general/xdebug.php');
@@ -238,6 +238,7 @@ if (APPLICATION_ENV == 'dev' || APPLICATION_ENV == 'combo') { // сервер р
     }
 } else { // если не сервер разработки - поднимаем заглушку на дебаг
     require_once(__DIR__.'/classes/general/xdebug_dummy.php');
+    if (class_exists('Kint')) \Kint::$enabled_mode = false;
 }
 
 // экземпляр приложения
