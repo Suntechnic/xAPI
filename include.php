@@ -1,7 +1,4 @@
 <?
-
-
-
 //define('BX_COMP_MANAGED_CACHE', true);
 include(__DIR__.'/install/version.php');
 define('XDEFINE_VERSION', $arModuleVersion['VERSION']);
@@ -15,6 +12,7 @@ $local_dir = '/local';
 $root_dir = \Bitrix\Main\Application::getDocumentRoot();
 
 $arConstants = include($root_dir.$local_dir.'/x/config.php'); // загрузка конфигурации проекта
+if (!is_array($arConstants) || !count($arConstants)) return;
 
 $arConstantsDefault = array(
         // окружение приложения
