@@ -5,6 +5,8 @@
 UF_XML_ID	Строка
 UF_STRING	Строка
 UF_NAME	Строка
+
+Могут быть так же добавлены поля вид UF_STRING__{КОД_ЯЗЫКА} для вывода локализованных значений
 */
 namespace X\Abstraction\Protomodel {
     class Stringstorage extends \X\Abstraction\HLBModel {
@@ -16,7 +18,13 @@ namespace X\Abstraction\Protomodel {
                 $replace=''
             ) {
             $arElement = $this->setFilter(['UF_XML_ID'=>$xml_id])->getElement();
-            $str = $arElement['UF_STRING'];
+            
+            if ($arElement['UF_STRING__'.LANGUAGE_UID]) {
+                $str = $arElement['UF_STRING__'.LANGUAGE_UID];
+            } else {
+                $str = $arElement['UF_STRING'];
+            }
+            
             if ($search) $str = str_replace($search,$replace,$str);
             return $str;
         }
