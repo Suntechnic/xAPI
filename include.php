@@ -161,8 +161,10 @@ if (APPLICATION_ENV != 'production'
         || !file_exists(S_P_X.'/config_cache/autoload')) {
     
     Bitrix\Main\Loader::registerAutoLoadClasses('x.api',  array(
-            // абстрация
+            // классы расширеня
+            '\X\IBlockProperties\ElementWithDescription'=> 'classes/general/iblockproperties/elementwithdescription.php',
             
+            // абстрация
             '\X\Abstraction\App'                        => 'lib/abstraction/app.php',
             '\X\Abstraction\Singleton'                  => 'lib/abstraction/singleton.php',
             

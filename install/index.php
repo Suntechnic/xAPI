@@ -10,7 +10,14 @@ class x_api extends CModule {
 	var $MODULE_UID = "api";
 	var $MODULE_TYPE = "M";
 	var $MODULE_CODE = "API";
-	var $MODULE_EVENTS = array();
+	var $MODULE_EVENTS = [
+			[
+					'module' => 'iblock',
+					'event' => 'OnIBlockPropertyBuildList',
+					'class' => '\X\IBlockProperties\ElementWithDescription',
+					'method' => 'GetIBlockPropertyDescription'
+				]
+		];
 	
 	var $MODULE_DIR;
 	var $MODULE_DIR_ABS;
@@ -139,7 +146,7 @@ class x_api extends CModule {
 	
 	function InstallEvents() {
 		foreach ($this->MODULE_EVENTS as $arEvent) {
-			RegisterModuleDependences(
+			\RegisterModuleDependences(
 					$arEvent['module'],
 					$arEvent['event'],
 					$this->MODULE_ID,
@@ -152,7 +159,7 @@ class x_api extends CModule {
 
 	function UnInstallEvents() {
 		foreach ($this->MODULE_EVENTS as $arEvent) {
-			UnRegisterModuleDependences(
+			\UnRegisterModuleDependences(
 					$arEvent['module'],
 					$arEvent['event'],
 					$this->MODULE_ID,
